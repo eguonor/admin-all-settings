@@ -66,6 +66,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           size="icon"
           className="fixed top-4 left-4 z-50"
           onClick={toggleSidebar}
+          aria-label={sidebarOpen ? "Close menu" : "Open menu"}
         >
           {sidebarOpen ? (
             <X className="h-5 w-5" />
@@ -84,13 +85,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         )}
       >
         <div className="flex h-full flex-col">
-          <div className="p-6">
+          <div className="flex items-center justify-between p-6">
             <Link to="/" className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
                 <Settings className="h-5 w-5 text-white" />
               </div>
               <span className="font-semibold text-lg">Admin Dashboard</span>
             </Link>
+            {isMobile && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleSidebar}
+                className="md:hidden"
+                aria-label="Close menu"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            )}
           </div>
           <Separator />
           <nav className="flex-1 px-4 py-6 space-y-1">
@@ -104,6 +116,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     ? "bg-accent text-accent-foreground"
                     : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground"
                 )}
+                onClick={isMobile ? toggleSidebar : undefined}
               >
                 {item.icon}
                 {item.title}
@@ -124,13 +137,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </div>
       </div>
 
-      {/* Main content area */}
+      {/* Main content area with overlay on mobile when sidebar is open */}
       <div 
         className={cn(
           "flex-1 transition-all duration-300 ease-apple",
           sidebarOpen ? "md:ml-64" : "ml-0"
         )}
       >
+        {/* Overlay for mobile when sidebar is open */}
+        {isMobile && sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-30"
+            onClick={toggleSidebar}
+            aria-hidden="true"
+          />
+        )}
         <main className="mx-auto max-w-5xl p-6 md:p-10 page-transition">
           {children}
         </main>
